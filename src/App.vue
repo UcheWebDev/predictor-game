@@ -74,7 +74,7 @@
           <div class="winningAmount">
             PnL ≈ $ <span>{{ cashOutPrice }} | {{ nearEquiv }}</span>
           </div>
-          <div class="actionBtnContainer">
+          <div class="actionBtnContainer" v-if="isSignedIn">
             <div class="actionBtn up" @click="createNewBid('up')">UP</div>
             <div class="actionBtn down" @click="createNewBid('down')">DOWN</div>
           </div>
@@ -83,7 +83,7 @@
             <ul class="previousList" v-if="!isSignedIn">
               <li>Connect Wallet First</li>
             </ul>
-            <table class="table table-striped">
+            <table class="table table-striped" v-else>
               <thead>
                 <tr>
                   <th scope="col">Stake ($)</th>
