@@ -71,9 +71,9 @@
             </p>
           </div>
           <p v-if="errorText">{{ errorText }}</p>
-          <div class="winningAmount">
+          <!-- <div class="winningAmount">
             PnL ≈ $ <span>{{ cashOutPrice }} | {{ nearEquiv }}</span>
-          </div>
+          </div> -->
           <div class="actionBtnContainer" v-if="isSignedIn">
             <div class="actionBtn up" @click="createNewBid('up')">UP</div>
             <div class="actionBtn down" @click="createNewBid('down')">DOWN</div>
@@ -87,6 +87,8 @@
               <thead>
                 <tr>
                   <th scope="col">Stake ($)</th>
+                  <th scope="col">Open</th>
+                  <th scope="col">Close</th>
                   <th scope="col">Status</th>
                   <th scope="col">Bid</th>
                   <th scope="col">Time</th>
@@ -95,6 +97,10 @@
               <tbody>
                 <tr v-for="bet in items" :key="bet.id">
                   <td>{{ bet.total_stake }}</td>
+                  <td>{{ bet.bid_price }}</td>
+                  <td>
+                    {{ bet.close_price ? bet.close_price.toFixed(6) : '0.00' }}
+                  </td>
                   <td>
                     <template v-if="bet.status === 'won'">
                       <button class="btn-small" @click="cashout(bet.id)">
@@ -107,7 +113,7 @@
                       >
                     </template>
                   </td>
-                  <td>{{ bet.bidType }}</td>
+                  <td style="text-transform: capitalize">{{ bet.bidType }}</td>
                   <td>{{ getTimeSince(bet.created_at) }}</td>
                 </tr>
               </tbody>
