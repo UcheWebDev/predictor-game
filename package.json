@@ -8,8 +8,30 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@near-wallet-selector/core": "8.8.0",
+    "@near-wallet-selector/here-wallet": "8.8.0",
+    "@near-wallet-selector/modal-ui": "^8.9.7",
+    "@near-wallet-selector/modal-ui-js": "8.8.0",
+    "@near-wallet-selector/my-near-wallet": "8.8.0",
+    "@supabase/supabase-js": "^2.43.5",
+    "@vueuse/core": "^10.11.0",
+    "assert": "^2.1.0",
+    "buffer": "^6.0.3",
     "core-js": "^3.8.3",
-    "vue": "^3.2.13"
+    "crypto-browserify": "^3.12.0",
+    "dotenv-webpack": "^8.1.0",
+    "https-browserify": "^1.0.0",
+    "moment": "^2.30.1",
+    "near-api-js": "1.0.0",
+    "os-browserify": "^0.3.0",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "tradingview-api-adapter": "^1.2.2",
+    "url": "^0.11.3",
+    "vm-browserify": "^1.1.2",
+    "vue": "^3.2.13",
+    "vue-tradingview-widgets": "^1.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

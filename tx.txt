@@ -1,0 +1,72 @@
+<template>
+  <div id="app">
+    <h1>Supabase Pagination with Vue 3</h1>
+    <ul>
+      <li v-for="item in items" :key="item.id">{{ item.bidder }}</li>
+    </ul>
+    <div>
+      <button @click="previousPage" :disabled="page === 1">Previous</button>
+      <span>Page {{ page }}</span>
+      <button @click="nextPage" :disabled="page >= totalPages">Next</button>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+import { supabase } from "@/libs/supabaseClient";
+
+const items = ref([]);
+const page = ref(1);
+const totalPages = ref(1);
+const itemsPerPage = 5;
+
+const fetchItems = async () => {
+  const { data, count } = await supabase
+    .from('bids')
+    .select('*', { count: 'exact' })
+    .range((page.value - 1) * itemsPerPage, page.value * itemsPerPage - 1);
+
+  items.value = data;
+  totalPages.value = Math.ceil(count / itemsPerPage);
+};
+
+onMounted(fetchItems);
+watch(page, fetchItems);
+
+const previousPage = () => {
+  if (page.value > 1) {
+    page.value--;
+  }
+};
+
+const nextPage = () => {
+  if (page.value < totalPages.value) {
+    page.value++;
+  }
+};
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  background: #f9f9f9;
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+button {
+  margin: 5px;
+}
+</style>

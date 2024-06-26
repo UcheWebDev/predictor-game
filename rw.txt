@@ -93,20 +93,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="bet in items" :key="bet.id">
+                <tr v-for="bet in bets" :key="bet.id">
                   <td>{{ bet.total_stake }}</td>
-                  <td>
-                    <template v-if="bet.status === 'won'">
-                      <button class="btn-small" @click="cashout(bet.id)">
-                        Pay
-                      </button>
-                    </template>
-                    <template v-else>
-                      <span style="text-transform: capitalize">
-                        {{ bet.status }}</span
-                      >
-                    </template>
-                  </td>
+                  <td>{{ bet.status }}</td>
                   <td>{{ bet.bidType }}</td>
                   <td>{{ getTimeSince(bet.created_at) }}</td>
                 </tr>
@@ -115,16 +104,18 @@
             <div>
               <button
                 class="btn btn-primary btn-sm"
-                @click="previousPage"
-                :disabled="page === 1"
+                :class="{ disabled: currentPage === 1 }"
+                @click="goToPrevPage"
+                :disabled="currentPage === 1"
               >
                 Prev
               </button>
-              <span style="margin-right: 4px">Page {{ page }}</span>
+              <!-- <span class="mx-2">Page {{ currentPage }}</span> -->
               <button
                 class="btn btn-primary btn-sm"
-                @click="nextPage"
-                :disabled="page >= totalPages"
+                :class="{ disabled: currentPage >= totalPages }"
+                @click="goToNextPage"
+                :disabled="currentPage >= totalPages"
               >
                 Next
               </button>
@@ -186,10 +177,10 @@ const selectedCoinName = ref("NEAR");
 const currentCoinPrice = ref(null);
 const selectedTicker = ref("NEAR");
 
-const items = ref([]);
-const page = ref(1);
-const totalPages = ref(1);
-const itemsPerPage = 3;
+const bets = ref([]);
+const currentPage = ref(1);
+const pageSize = ref(5);
+const totalPages = ref(0);
 
 const handleSelectionChange = (newOption) => {
   selectedTicker.value = newOption.text;
@@ -223,27 +214,57 @@ const getTimeSince = (timestamp) => {
   return then.from(now);
 };
 
-const fetchItems = async () => {
-  const { data, count } = await supabase
-    .from("bids")
-    .select("*", { count: "exact" })
-    .eq("bidder", accountId.value)
-    .order("created_at", { ascending: false })
-    .range((page.value - 1) * itemsPerPage, page.value * itemsPerPage - 1);
+// const statusClass = (status) => {
+//   return {
+//     "status-won": status === "Won",
+//     "status-lost": status === "Lost",
+//     "status-pending": status === "Pending",
+//   };
+// };
 
-  items.value = data;
-  totalPages.value = Math.ceil(count / itemsPerPage);
+const getPagination = (page, size) => {
+  const limit = size ? +size : 3;
+  const from = page ? page * limit : 0;
+  const to = page ? from + size - 1 : size - 1;
+
+  return { from, to };
 };
 
-const previousPage = () => {
-  if (page.value > 1) {
-    page.value--;
+const loadMore = async () => {
+  try {
+    const { from, to } = getPagination(currentPage.value, pageSize.value);
+    const { data, error, count } = await supabase
+      .from("bids")
+      .select("*", { count: "exact" })
+      .order("id", { ascending: true })
+      .eq("bidder", accountId.value)
+      .range(from, to);
+
+    if (error) {
+      console.error("Error fetching data:", error);
+      return;
+    }
+
+    bets.value = data;
+    totalPages.value = Math.ceil(count / pageSize.value);
+    console.log(count);
+  } catch (error) {
+    console.log(error);
   }
 };
 
-const nextPage = () => {
-  if (page.value < totalPages.value) {
-    page.value++;
+const goToPrevPage = async () => {
+  if (currentPage.value > 1) {
+    pageSize.value--;
+    await loadMore();
+  }
+};
+
+const goToNextPage = async () => {
+  if (currentPage.value < totalPages.value) {
+    pageSize.value++;
+    console.log(currentPage.value);
+    await loadMore();
   }
 };
 
@@ -344,7 +365,7 @@ const createNewBid = async (bidType) => {
     });
     errorText.value = null;
     getAvailableBalance();
-    fetchItems();
+    loadMore();
   } catch (error) {
     errorText.value = "Something went wrong";
     console.error("Error creating new bid:", error);
@@ -353,39 +374,11 @@ const createNewBid = async (bidType) => {
   }
 };
 
-const cashout = async (id) => {
-  isMakingRequest.value = true;
-  try {
-    const { data } = await supabase.from("bids").select("*").eq("id", id);
-    const { total_stake } = data[0];
-    const rate = total_stake / exchangeRate.value;
-    const stakeInNear = rate.toFixed(1);
-    await callMethod({
-      contractId: contractName,
-      method: "increment_stake",
-      args: {
-        orderVal: nearAPI.utils.format.parseNearAmount(stakeInNear.toString()),
-      },
-    });
-    const { data: updatedData, error: updateError } = await supabase
-      .from("bids")
-      .update({ status: "Paid" })
-      .eq("id", id);
-    if (updateError) throw Error(updateError);
-    console.log(updatedData);
-    getAvailableBalance();
-    fetchItems();
-    isMakingRequest.value = false;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 /* Lifecycle Hook */
 onMounted(async () => {
   await startUp();
   await getAvailableBalance();
-  fetchItems();
+  loadMore();
   getExchangeRate();
   updateCryptoPrice();
   convertUsdToNear();
@@ -393,7 +386,6 @@ onMounted(async () => {
 });
 
 watch(stakeBalanceNear, convertToUsd);
-watch(page, fetchItems);
 </script>
 
 <style>

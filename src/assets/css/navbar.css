@@ -1,0 +1,368 @@
+.nav{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(10,10,15);
+    padding: 10px 0px;
+    font-family: 'Josefin Sans';
+    border-bottom: 1px solid crimson;
+    position: fixed;
+    top: 0;
+    z-index: 99999999;
+}
+.navbar{
+    width: 95%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.navLogoSection {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.navLogoImage{
+    height: 32px;
+    width: auto;
+}
+.navMenuSection {
+    flex: 2;
+}
+.navMenuList{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+    font-size: 15px;
+    list-style: none;
+}
+.navMenuItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.navMenuItem:hover {
+    color: orange;
+}
+.navMenuItem i{
+    font-size: 18px;
+    color: rgb(175, 175, 175);
+}
+.navActionSection {
+    flex: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.changeNetwork {
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    background: rgb(40,40,40);
+    border-radius: 50px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+.changeNetwork img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.changeNetwork p {
+    margin: 0;
+    padding: 0;
+    margin-top: 2px;
+}
+.connectWalletBtn{
+    font-size: 15px;
+    text-transform: uppercase;
+    background: white;
+    border: 1px solid white;
+    box-shadow: 0px 0px 5px white;
+    color: crimson;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-family: "Space Mono", monospace;
+
+    /* font-family: "Roboto Slab"; */
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+.btn{
+    font-size: 15px;
+    text-transform: uppercase;
+    background: white;
+    border: 1px solid white;
+    box-shadow: 0px 0px 5px white;
+    color: crimson;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-weight: 700;
+    font-family: "Space Mono", monospace;
+
+    /* font-family: "Roboto Slab"; */
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.btn-small{
+    font-size: 10px;
+    text-transform: uppercase;
+    background: white;
+    border: 1px solid white;
+    box-shadow: 0px 0px 5px white;
+    color: crimson;
+    border-radius: 20px;
+    padding: 6px 10px;
+    font-weight: 700;
+    font-family: "Space Mono", monospace;
+
+    /* font-family: "Roboto Slab"; */
+    letter-spacing: 1px;
+    cursor: pointer;
+
+}
+
+
+.walletWrapper,
+.networkWrapper{
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 999;
+    background: rgba(20,20,25,0.6);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+.walletContainer,
+.networkContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: rgb(10, 10, 15);
+    box-shadow: 0px 0px 100px black;
+    padding: 25px 28px;
+    border-radius: 20px;
+    z-index: 999;
+    border: 1px solid crimson;
+    animation: scale-in 0.25s ease-in-out;
+}
+.networkContainer {
+    border: 1px solid orange;
+}
+.walletContainer h3,
+.networkContainer h3{
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: gray;
+    margin-bottom: 10px;
+    font-family: "Josefin Sans";
+}
+@keyframes scale-in {
+    0% {
+        opacity: 0.2;
+        transform: scale(0.4);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        z-index: 999;
+    }
+}
+.walletList,
+.networkList{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.walletRow,
+.networkRow{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+.walletItem,
+.networkItem{
+    width: 100%;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 10px;
+    cursor: pointer;
+    background: rgb(25,25,30);
+    padding: 8px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding-right: 14px;
+    text-transform: uppercase;
+    font-family: "Josefin Sans";
+}
+.walletItem:hover,
+.networkItem:hover{
+    transform: scale(1.03);
+    box-shadow: 0px 0px 100px black;
+}
+.walletItem img,
+.networkItem img{
+    height: 34px;
+    width: auto;
+    object-fit: cover;
+}
+.networkItem img {
+    height: 45px;
+    width: 45px;
+    border-radius: 50%;
+    background: white;
+    padding: 2px;
+}
+#injected-icon{
+    border-radius: 50%;
+    object-fit: cover;
+    width: 34px;
+    margin-right: 2px;
+}
+
+
+@media(max-width:580px) {
+    #metamask,
+    #injected,
+    #trust,
+    #enkrypt {
+        display: none;
+    }
+    .walletList, .networkList {
+        gap: 5px;
+    }
+    .walletRow {
+        gap: 0;
+    }
+    .networkRow {
+        gap: 5px;
+    }
+    .networkItem {
+        padding: 8px 5px;
+        font-size: 10px;
+        min-width: auto;
+        text-align: center;
+        min-height: 90px;
+    }
+    .networkContainer {
+        padding: 15px 8px;
+    }
+}
+
+.walletDisconnect{
+    position: fixed;
+    right: 20px;
+    top: 55px;
+    width: 160px;
+    background: rgba(20,20,25,1);
+    padding: 20px 15px;
+    box-shadow: 0px 0px 50px black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    display: none;
+}
+.walletDisconnect p{
+    width: 100%;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: black;
+    padding: 5px 12px;
+    background: crimson;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+
+}
+#close-dis{
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    background: rgb(60,60,60);
+    color: white;
+    width: 100%;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+@media(max-width: 970px) {
+    .navMenuList {
+        gap: 15px;
+    }
+}
+@media(max-width: 880px) {
+    .navMenuSection{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgb(10,10,15);
+        padding: 8px 0px 4px 0px;
+        border-top: 1px solid rgb(60,60,60);
+    }
+    .navMenuList{
+        justify-content: space-around;
+    }
+    .navMenuItem{
+        flex-direction: column;
+        font-size: 12px;
+    }
+    .navMenuItem i{
+        font-size: 20px;
+    }
+}
+@media(max-width: 550px) {
+    .navLogoImage{
+        height: 28px;
+    }
+    .connectWalletBtn {
+        font-size: 12px;
+        padding: 7px 10px;
+        box-shadow: none;
+    }
+
+    .btn{
+        font-size: 12px;
+        padding: 7px 10px;
+        box-shadow: none;
+    }
+}

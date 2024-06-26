@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&amp;display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;600;700&amp;display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: 0.3s ease-in-out;
+}
+body {
+    font-family: "Space Mono", monospace;
+    font-weight: 300;
+    /* background: url("/static/main/images/background.png"); */
+    background: rgb(25,25,25);
+    background-position: center;
+    background-size: 115%;
+    color: white;
+    height: 100%;
+}
+html {
+  height: 100%;
+}
+
+a{
+  text-decoration: none;
+  color: white;
+}
+
+/*-- scroll styling */
+
+::-webkit-scrollbar {
+    width: 2px;
+    border-radius: 3px;
+    height: 3px;
+    margin: 0px 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 0px 20px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgb(170,170,170);
+    border-radius: 0px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: orange;
+    ;
+  }
+  
+  /* -------------------- */
+  
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  /* Firefox */
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  /* globalMessage----------- */
+  .globalMessage {
+    position: fixed;
+    bottom: 40px;
+    right: -2px;
+    font-size: 15px;
+    letter-spacing: 1px;
+    padding: 15px 45px;
+    border-radius: 0px;
+    font-weight: 400;
+    z-index: 999999999999;
+    font-family: "Roboto Slab";
+    box-shadow: 0px 0px 50px black;
+    animation: messagePop 0.4s ease-in-out;
+    text-align: left;
+    background: rgb(0,0,0,0.8);
+  }
+  #info, #error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  #info i, #error i{
+    padding-top: 3px;
+    font-size: 14px;
+  }
+  .info {
+    color: rgb(0, 189, 0);
+    display: none;
+    border: 1px solid rgb(0, 189, 0);
+  }
+  .error {
+    color: crimson;
+    display: none;
+    border: 1px solid crimson;
+  }
+  @keyframes messagePop {
+    0%{
+      transform: translateX(100px);
+      opacity: 0;
+    }
+    100%{
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
