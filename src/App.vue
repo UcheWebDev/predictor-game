@@ -27,10 +27,10 @@
   <!-- Main Container -->
   <section class="container">
     <div class="mainContainer">
-      <Marquee :duration="20">
+      <!-- <Marquee :duration="20">
         PREDICTOR is a gambling contract where bosses stake to earn by
         predicting the price of a crypto price in the next 5 minutes
-      </Marquee>
+      </Marquee> -->
       <div class="gameContainer">
         <Chart :ticker="selectedTicker" />
         <div class="actionContainer">
@@ -79,45 +79,51 @@
             <div class="actionBtn down" @click="createNewBid('down')">DOWN</div>
           </div>
           <div class="previousBets">
-            <h5 class="previousHead">Your Bids</h5>
+            <h5 class="previousHead" style="color: #fff">Your Bids</h5>
             <ul class="previousList" v-if="!isSignedIn">
               <li>Connect Wallet First</li>
             </ul>
-            <table class="table table-striped" v-else>
-              <thead>
-                <tr>
-                  <th scope="col">Stake ($)</th>
-                  <th scope="col">Open</th>
-                  <th scope="col">Close</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Bid</th>
-                  <th scope="col">Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="bet in items" :key="bet.id">
-                  <td>{{ bet.total_stake }}</td>
-                  <td>{{ bet.bid_price }}</td>
-                  <td>
-                    {{ bet.close_price ? bet.close_price.toFixed(6) : '0.00' }}
-                  </td>
-                  <td>
-                    <template v-if="bet.status === 'won'">
-                      <button class="btn-small" @click="cashout(bet.id)">
-                        Pay
-                      </button>
-                    </template>
-                    <template v-else>
-                      <span style="text-transform: capitalize">
-                        {{ bet.status }}</span
-                      >
-                    </template>
-                  </td>
-                  <td style="text-transform: capitalize">{{ bet.bidType }}</td>
-                  <td>{{ getTimeSince(bet.created_at) }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-responsive" v-else>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Stake ($)</th>
+                    <th scope="col">Open</th>
+                    <th scope="col">Close</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Bid</th>
+                    <th scope="col">Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="bet in items" :key="bet.id">
+                    <td>{{ bet.total_stake }}</td>
+                    <td>{{ bet.bid_price }}</td>
+                    <td>
+                      {{
+                        bet.close_price ? bet.close_price.toFixed(6) : "0.00"
+                      }}
+                    </td>
+                    <td>
+                      <template v-if="bet.status === 'won'">
+                        <button class="btn-small" @click="cashout(bet.id)">
+                          Pay
+                        </button>
+                      </template>
+                      <template v-else>
+                        <span style="text-transform: capitalize">
+                          {{ bet.status }}</span
+                        >
+                      </template>
+                    </td>
+                    <td style="text-transform: capitalize">
+                      {{ bet.bidType }}
+                    </td>
+                    <td>{{ getTimeSince(bet.created_at) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <div>
               <button
                 class="btn btn-primary btn-sm"
@@ -143,18 +149,17 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, onUnmounted } from "vue";
 import * as nearAPI from "near-api-js";
 import { useWallet } from "./composables/useWallet";
 import { fetchAlternativePrice, fetchExchangeRate } from "./utils";
 import { supabase } from "@/libs/supabaseClient";
 
-import { TvApiAdapter } from "tradingview-api-adapter";
 import moment from "moment";
 
 import Chart from "./components/ChartComponent.vue";
 import Select from "./components/SelectComponent.vue";
-import Marquee from "./components/MarqueeComponent.vue";
+// import Marquee from "./components/MarqueeComponent.vue";
 
 /* NETWORK DETAILS */
 const contractName = "predictor.testnet";
@@ -196,6 +201,7 @@ const items = ref([]);
 const page = ref(1);
 const totalPages = ref(1);
 const itemsPerPage = 3;
+let intervalId = null;
 
 const handleSelectionChange = (newOption) => {
   selectedTicker.value = newOption.text;
@@ -253,20 +259,6 @@ const nextPage = () => {
   }
 };
 
-const updateCryptoPrice = async () => {
-  const adapter = new TvApiAdapter();
-  adapter
-    .Quote(`${selectedCoinName.value}USD`, "BINANCE", [
-      "lp",
-      "ch",
-      "chp",
-      "trade",
-    ])
-    .listen((data) => {
-      currentCoinPrice.value = data.lp;
-    });
-};
-
 const calculateStakeBalance = (percent) => {
   errorText.value = "";
   selectedPercentage.value = percent;
@@ -320,7 +312,8 @@ const createNewBid = async (bidType) => {
 
   if (!currentCoinPrice.value) {
     try {
-      currentCoinPrice.value = await fetchAlternativePrice();
+      const price = await fetchAlternativePrice();
+      currentCoinPrice.value = price.toFixed(5);
     } catch (error) {
       console.log("error getting price");
     }
@@ -393,9 +386,11 @@ onMounted(async () => {
   await getAvailableBalance();
   fetchItems();
   getExchangeRate();
-  updateCryptoPrice();
   convertUsdToNear();
-  updateCryptoPrice();
+  intervalId = setInterval(fetchItems, 1000);
+});
+onUnmounted(() => {
+  clearInterval(intervalId);
 });
 
 watch(stakeBalanceNear, convertToUsd);
@@ -414,6 +409,17 @@ td {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-responsive .table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
 }
 
 .button-container {

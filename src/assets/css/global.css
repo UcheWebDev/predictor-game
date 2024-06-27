@@ -11,7 +11,7 @@ body {
     font-family: "Space Mono", monospace;
     font-weight: 300;
     /* background: url("/static/main/images/background.png"); */
-    background: rgb(25,25,25);
+    background:#171b26;
     background-position: center;
     background-size: 115%;
     color: white;

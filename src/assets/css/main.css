@@ -8,7 +8,7 @@
 
 .statsContainer {
     width: 100%;
-    background: rgb(0, 0, 0);
+    background:#1f2434;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -85,7 +85,7 @@
 
 .actionContainer {
     flex: 1;
-    background: rgb(30, 30, 30);
+    background: #1f2434;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -177,10 +177,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: black;
+    background: #171b26;
     width: 100%;
     border-radius: 2px;
-    border: 1px solid rgba(78, 151, 69, 255);
+    /* border: 1px solid rgba(78, 151, 69, 255); */
 }
 
 .inputContainer input {
@@ -188,7 +188,7 @@
     /* font-size: 15px; */
     /* font-family: "Roboto Slab"; */
     color: white;
-    background: rgb(15, 15, 15);
+    background:#171b26;
     border-radius: 2px;
     border: none;
     border-right: 1px solid rgba(78, 151, 69, 255);
@@ -294,7 +294,7 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: black;
+    background: #1f2434;
     border-radius: 2px;
     padding: 10px;
     width: 100%;
@@ -545,12 +545,12 @@
     padding: 10px;
     width: 100%;
     border-radius: 2px;
-    background: rgb(50, 50, 50);
+    background: #171b26;
     text-align: center;
     font-weight: 600;
     letter-spacing: 1px;
     cursor: pointer;
-    border: 2px solid rgb(50, 50, 50);
+    border: 2px solid #fff;
 }
 
 /* .balanceScaleItem:hover {

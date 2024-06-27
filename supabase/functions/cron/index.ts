@@ -27,7 +27,8 @@ serve(async (req) => {
       const diffMinutes = (currentTime.getTime() - createdTime.getTime()) / (1000 * 60);
 
       if (diffMinutes >= 5) {
-        const currentCryptoPrice = await fetchCryptoCurrentPrice(record.coinType)
+        const price = await fetchCryptoCurrentPrice(record.coinType)
+        const currentCryptoPrice = price !== undefined && price !== null ? Number(price.toFixed(5)) : 0;
 
         if (currentCryptoPrice === null) {
           console.error(`Failed to fetch current price`);

@@ -3,10 +3,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgb(10,10,15);
+    background: #1f2434;
     padding: 10px 0px;
     font-family: 'Josefin Sans';
-    border-bottom: 1px solid crimson;
+    border-bottom: 1px solid #3d4863;
     position: fixed;
     top: 0;
     z-index: 99999999;
@@ -87,10 +87,10 @@
 .connectWalletBtn{
     font-size: 15px;
     text-transform: uppercase;
-    background: white;
+    background: #343e56;
     border: 1px solid white;
     box-shadow: 0px 0px 5px white;
-    color: crimson;
+    color: #fff;
     border-radius: 20px;
     padding: 6px 14px;
     font-weight: 700;
@@ -103,10 +103,10 @@
 .btn{
     font-size: 15px;
     text-transform: uppercase;
-    background: white;
+    background: #343e56;
     border: 1px solid white;
     box-shadow: 0px 0px 5px white;
-    color: crimson;
+    color: #fff;
     border-radius: 20px;
     padding: 6px 14px;
     font-weight: 700;
@@ -120,10 +120,10 @@
 .btn-small{
     font-size: 10px;
     text-transform: uppercase;
-    background: white;
+    background: #343e56;
     border: 1px solid white;
     box-shadow: 0px 0px 5px white;
-    color: crimson;
+    color: #fff;
     border-radius: 20px;
     padding: 6px 10px;
     font-weight: 700;
