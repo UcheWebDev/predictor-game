@@ -12,9 +12,16 @@
         </div>
         <div class="navActionSection">
           <div class="connectWalletBtn" v-if="!isSignedIn" @click="signIn">
-            Connect Wallet
+            Connect
           </div>
           <div v-else class="button-container">
+            <div
+              class="connectWalletBtn"
+              @click="cashOutFundsToWallet"
+              v-if="stakeBalanceNear == 10"
+            >
+              Cash Out
+            </div>
             <div class="connectWalletBtn" @click="addStakeOneNear">
               Add Stake
             </div>
@@ -32,14 +39,17 @@
         predicting the price of a crypto price in the next 5 minutes
       </Marquee> -->
       <div class="gameContainer">
-        <Chart :ticker="selectedTicker" />
+        <Chart :ticker="selectedTicker" @updatePrice="updatePrice" />
         <div class="actionContainer">
           <h2 class="actionHead">PLACE YOUR BID</h2>
-          <div class="balanceContainer">
+          <div class="balanceContainer" v-if="isSignedIn">
             Your Staking Balance:
             <span>{{ stakeBalanceNear }}</span> Ⓝ ($
             <span>{{ stakeBalanceUsd }}</span
             >)
+          </div>
+          <div class="balanceContainer" v-else>
+            <span>You are currently not signed in</span>
           </div>
           <div class="inputContainer">
             <input
@@ -70,10 +80,10 @@
               {{ percent }}%
             </p>
           </div>
-          <p v-if="errorText">{{ errorText }}</p>
+          <p v-if="errorText" style="font-size: 13px">{{ errorText }}</p>
           <!-- <div class="winningAmount">
-            PnL ≈ $ <span>{{ cashOutPrice }} | {{ nearEquiv }}</span>
-          </div> -->
+              PnL ≈ $ <span>{{ cashOutPrice }} | {{ nearEquiv }}</span>
+            </div> -->
           <div class="actionBtnContainer" v-if="isSignedIn">
             <div class="actionBtn up" @click="createNewBid('up')">UP</div>
             <div class="actionBtn down" @click="createNewBid('down')">DOWN</div>
@@ -107,7 +117,7 @@
                     <td>
                       <template v-if="bet.status === 'won'">
                         <button class="btn-small" @click="cashout(bet.id)">
-                          Pay
+                          TP
                         </button>
                       </template>
                       <template v-else>
@@ -124,7 +134,7 @@
                 </tbody>
               </table>
             </div>
-            <div>
+            <div v-if="isSignedIn">
               <button
                 class="btn btn-primary btn-sm"
                 @click="previousPage"
@@ -142,6 +152,20 @@
               </button>
             </div>
           </div>
+
+          <!-- About Modal -->
+          <ModalComp :header="'Notice !!'" v-model:isVisible="showModal">
+            <p>
+              To ensure you are bidding on the most current price data , always
+              refresh before you bid. This helps in synchronizing with the
+              latest updates and potentially bypassing web socket issues and
+              provides you with the most recent price.
+            </p>
+            <p>
+              Also remember to take profits as data's are cleared offchain to
+              prevent excessive data storage.
+            </p>
+          </ModalComp>
         </div>
       </div>
     </div>
@@ -149,6 +173,7 @@
 </template>
 
 <script setup>
+/*eslint-disable*/
 import { onMounted, ref, watch, onUnmounted } from "vue";
 import * as nearAPI from "near-api-js";
 import { useWallet } from "./composables/useWallet";
@@ -159,7 +184,7 @@ import moment from "moment";
 
 import Chart from "./components/ChartComponent.vue";
 import Select from "./components/SelectComponent.vue";
-// import Marquee from "./components/MarqueeComponent.vue";
+import ModalComp from "./components/modal/ModalComp.vue";
 
 /* NETWORK DETAILS */
 const contractName = "predictor.testnet";
@@ -196,6 +221,7 @@ const selectedCrypto = ref("NEAR");
 const selectedCoinName = ref("NEAR");
 const currentCoinPrice = ref(null);
 const selectedTicker = ref("NEAR");
+const showModal = ref(false);
 
 const items = ref([]);
 const page = ref(1);
@@ -207,6 +233,10 @@ const handleSelectionChange = (newOption) => {
   selectedTicker.value = newOption.text;
   selectedCoinName.value = newOption.text;
   selectedCrypto.value = newOption.name;
+};
+
+const updatePrice = (price) => {
+  currentCoinPrice.value = price;
 };
 
 const getExchangeRate = async () => {
@@ -266,6 +296,23 @@ const calculateStakeBalance = (percent) => {
   convertUsdToNear();
 };
 
+const checkForActiveBets = () => {
+  return items.value.some((bet) => bet.status === "active");
+};
+
+const startInterval = () => {
+  if (checkForActiveBets()) {
+    intervalId = setInterval(fetchItems, 6000);
+  }
+};
+
+const stopInterval = () => {
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+};
+
 /* Wallet Functions */
 const getAvailableBalance = async () => {
   try {
@@ -311,11 +358,10 @@ const createNewBid = async (bidType) => {
   }
 
   try {
-    const price = await fetchAlternativePrice();
     const { error } = await supabase.from("bids").insert([
       {
         bidder: accountId.value,
-        bid_price: price.toFixed(5),
+        bid_price: currentCoinPrice.value,
         total_stake: cashOutPrice.value,
         coinType: selectedCoinName.value,
         bidType: bidType,
@@ -334,7 +380,6 @@ const createNewBid = async (bidType) => {
       },
     });
     errorText.value = null;
-    currentCoinPrice.value = null;
     getAvailableBalance();
     fetchItems();
   } catch (error) {
@@ -364,13 +409,16 @@ const cashout = async (id) => {
       .update({ status: "Paid" })
       .eq("id", id);
     if (updateError) throw Error(updateError);
-    console.log(updatedData);
     getAvailableBalance();
     fetchItems();
     isMakingRequest.value = false;
   } catch (error) {
     console.log(error);
   }
+};
+
+const cashOutFundsToWallet = () => {
+  console.log("sjsjjga");
 };
 
 /* Lifecycle Hook */
@@ -380,14 +428,19 @@ onMounted(async () => {
   fetchItems();
   getExchangeRate();
   convertUsdToNear();
-  intervalId = setInterval(fetchItems, 1000);
+  showModal.value = true;
+  startInterval();
 });
 onUnmounted(() => {
-  clearInterval(intervalId);
+  stopInterval();
 });
 
 watch(stakeBalanceNear, convertToUsd);
 watch(page, fetchItems);
+watch(items, (newItems, oldItems) => {
+  stopInterval();
+  startInterval();
+});
 </script>
 
 <style>
