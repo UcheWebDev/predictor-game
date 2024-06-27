@@ -8,7 +8,7 @@
           lcw-coin="NEAR"
           lcw-base="USD"
           lcw-secondary="BTC"
-          lcw-period="d"
+          lcw-period="y"
           lcw-color-tx="#ffffff"
           lcw-color-pr="#00d084"
           lcw-color-bg="#1f2434"

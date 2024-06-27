@@ -310,20 +310,12 @@ const createNewBid = async (bidType) => {
     return false;
   }
 
-  if (!currentCoinPrice.value) {
-    try {
-      const price = await fetchAlternativePrice();
-      currentCoinPrice.value = price.toFixed(5);
-    } catch (error) {
-      console.log("error getting price");
-    }
-  }
-
   try {
+    const price = await fetchAlternativePrice();
     const { error } = await supabase.from("bids").insert([
       {
         bidder: accountId.value,
-        bid_price: currentCoinPrice.value,
+        bid_price: price.toFixed(5),
         total_stake: cashOutPrice.value,
         coinType: selectedCoinName.value,
         bidType: bidType,
@@ -342,6 +334,7 @@ const createNewBid = async (bidType) => {
       },
     });
     errorText.value = null;
+    currentCoinPrice.value = null;
     getAvailableBalance();
     fetchItems();
   } catch (error) {
